@@ -1,0 +1,20 @@
+@SpringBootTest
+@AutoConfigureMockMvc
+@TestExecutionListeners(WithSecurityContextTestExecutionListener.class)
+public class SampleControllerTest extends AbstractTestNGSpringContextTests {
+
+  @Autowired
+	private MockMvc mockMvc;
+  
+  @Autowired
+  SampleController controller;
+  
+  ...
+  @Test
+	@WithMockUser(username="admin",roles={"USER","ADMIN"})
+	public void testListProductsEmpty() throws Exception {
+    mockMvc.perform(get("/api/listProducts")).andDo(print())
+				.andExpect(status().isOk()).andExpect(content().json("[]"));
+  }
+  
+}
