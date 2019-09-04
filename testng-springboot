@@ -4,17 +4,26 @@
 public class SampleControllerTest extends AbstractTestNGSpringContextTests {
 
   @Autowired
-	private MockMvc mockMvc;
+  private MockMvc mockMvc;
   
   @Autowired
   SampleController controller;
   
   ...
   @Test
-	@WithMockUser(username="admin",roles={"USER","ADMIN"})
-	public void testListProductsEmpty() throws Exception {
-    mockMvc.perform(get("/api/listProducts")).andDo(print())
-				.andExpect(status().isOk()).andExpect(content().json("[]"));
+  @WithMockUser(username="admin",roles={"USER","ADMIN"})
+  public void testListProductsEmpty() throws Exception {
+    mockMvc.perform(get("/api/products/list"))
+      .andDo(print())
+      .andExpect(status().isOk())
+      .andExpect(content().json("[]"));
   }
   
+  @Test
+  public void testAccessDenied() throws JsonProcessingException, Exception {
+    mockMvc.perform(get("/api/products/list"))
+      .andExpect(status().is3xxRedirection())
+      .andExpect(redirectedUrl("http://localhost/"));
+  }
+	
 }
